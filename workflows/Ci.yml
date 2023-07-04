@@ -1,0 +1,22 @@
+name: Continuous delivery
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  ci:
+    name: Continuous integration
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: "Run eslint"
+        run: npx eslint index.js
+
+      - name: "Run jest"
+        run: npm run test
+
+      - uses: JS-DevTools/npm-publish@v2
+        with:
+          token: ${{ secrets.NPM_TOKEN }}
