@@ -1,22 +1,42 @@
-name: Continuous delivery
+name: Lint
 
-on:
+on: 
   push:
     branches:
-      - main
+      main
+
+
+
+
 
 jobs:
-  ci:
-    name: Continuous integration
+  eslint:
+    name: run linter
     runs-on: ubuntu-latest
-
     steps:
-      - name: "Run eslint"
-        run: npx eslint index.js
+      - uses: actions/checkout@v2
+      - uses: Adzz/jest_test_action@v1.0.0
+        with:
+          command: eslint
+  tests:
+    name: run tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: Adzz/jest_test_action@v1.0.0
+        with:
+          command: test:ci
 
-      - name: "Run jest"
-        run: npm run test
-
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+      - run: npm ci
+      - run: npm test
       - uses: JS-DevTools/npm-publish@v2
         with:
           token: ${{ secrets.NPM_TOKEN }}
+  
